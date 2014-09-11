@@ -1,0 +1,191 @@
+/**********************************************************
+//
+//
+//    functions.jsxinc
+//    Created on 11.9.2014.
+//
+//    @author Daniel Rufus Kaldheim <daniel@idrift.no>
+//    @copyright 2012 - 2014 iDrift Web AS
+//    @version 1.0.0
+*********************************************************/
+
+
+var drk_save = {
+
+	ToResolution: function(file, resolution, filetypes, directory, options) {
+
+		if (options.file === undefined) {
+			options.file = {};
+		}
+
+		if (options.directory === undefined) {
+			options.directory = {};
+		}
+
+		var SourceDocument = app.open(file);
+
+		for (var i = 0; i < filetypes.length; i++) {
+
+			TargetFileName = drk_filehandle.newFilename(SourceDocument, filetypes[i], options.file, directory, options.directory);
+
+			if (filetypes[i] == 'png') {
+				var imageOptions = drk_image_options.PNG({ 'scale' : resolution });
+				SourceDocument.exportFile( TargetFileName, ExportType.PNG24, imageOptions );
+			}
+			else if (filetypes[i] == "svg") {
+				var imageOptions = drk_image_options.SVG();
+				SourceDocument.exportFile( TargetFileName, ExportType.SVG, imageOptions );
+			}
+
+		};
+
+		SourceDocument.close(SaveOptions.DONOTSAVECHANGES);
+
+	}
+
+};
+
+
+var drk_filehandle = {
+
+	newFilename: function(sourceDocument, fileType, sourceDocumentOptions, directory, directoryOptions) {
+
+		var DocumentName = sourceDocument.name,
+
+		// Remove extension
+		DocumentName = DocumentName.substr(0, DocumentName.lastIndexOf('.'));
+
+		// Sterialize
+		var DocumentName = DocumentName.replace('_pantone', '');
+
+		if (directoryOptions.subFolder !== undefined && directoryOptions.subFolder === true) {
+
+			if (directoryOptions.subFolderName !== undefined) {
+				directory += '/' + directoryOptions.subFolderName;
+			}
+			else {
+				directory += '/' + DocumentName;
+			}
+
+		}
+
+		// Add prefix for directory
+		if (directoryOptions.prefix !== undefined) {
+			directory = directoryOptions.prefix + directory;
+		}
+
+		// Add postfix for directory
+		if (directoryOptions.postfix !== undefined) {
+			directory += directoryOptions.postfix;
+		}
+
+		var dir = new Folder(directory);
+		if(!dir.exists) {
+			dir.create();
+		}
+
+
+		// Add prefix for file
+		if (sourceDocumentOptions.prefix !== undefined) {
+			DocumentName = sourceDocumentOptions.prefix + DocumentName;
+		}
+
+		// Add postfix for file
+		if (sourceDocumentOptions.postfix !== undefined) {
+			DocumentName += sourceDocumentOptions.postfix;
+		}
+
+		// Add back new extension
+		DocumentName += '.' + fileType;
+
+		// Create a file object and save it in the directory
+		SaveFile = new File( directory + '/' + DocumentName );
+
+		return SaveFile;
+	}
+
+};
+
+
+var drk_image_options = {
+
+	PNG: function(options) {
+
+		// Create the PDFSaveOptions object to set the PDF options
+		var pngExportOpts = new ExportOptionsPNG24();
+
+		// Setting PNGExportOptions properties. Please see the JavaScript Reference
+		// for a description of these properties.
+		// Add more properties here if you like
+		pngExportOpts.antiAliasing = true;
+		pngExportOpts.artBoardClipping = false;
+		pngExportOpts.horizontalScale = options.scale;
+		//pngExportOpts.matte = true;
+		//pngExportOpts.matteColor = 0, 0, 0;
+		pngExportOpts.saveAsHTML = false;
+		pngExportOpts.transparency = true;
+		pngExportOpts.verticalScale = options.scale;
+
+		return pngExportOpts;
+	},
+
+	SVG: function() {
+
+		// Create the PDFSaveOptions object to set the PDF options
+		var svgExportOpts = new ExportOptionsSVG();
+
+		// should the exported file be compressed ( default: false )
+		svgExportOpts.compressed = false;
+
+		// decimal precision for element coordinate values ( 1 - 7; default: 3 )
+		svgExportOpts.coordinatePrecision = 3;
+		// how should the CSS properties of the document be included in the document ( default: SVGCSSPropertyLocation.STYLEATTRIBUTES )
+
+		//svgExportOpts.cssProperties = SVGCSSPropertyLocation.STYLEATTRIBUTES;
+
+		// how should the text in the document be encoded ( default: SVGDocumentEncoding.ASCII )
+		//svgExportOpts.documentEncoding = SVGDocumentEncoding.ASCII;
+
+		// the version of DTD that the exported file should be conforming to ( default: SVGDTDVersion.SVG1_1 )
+		//svgExportOpts.DTD = SVGDTDVersion.SVG1_1;
+
+		// should the raster images in the exported file be included ( default: false )
+		svgExportOpts.embedRasterImages = false;
+
+		// what font glyphs should be included in the exported file ( default: SVGFontSubsetting.ALLGLYPHS )
+		//svgExportOpts.fontSubsetting = SVGFontSubsetting.ALLGLYPHS;
+
+		// the type of font that should be included in the exported file ( default: SVGFontType.CEFFONT )
+		svgExportOpts.fontType = SVGFontType.OUTLINEFONT;
+
+		// ( default: false )
+		svgExportOpts.includeFileInfo = false;
+
+		// ( default: false )
+		svgExportOpts.includeVariablesAndDatasets = false;
+
+		// ( default: false )
+		svgExportOpts.optimizeForSVGViewer = false;
+
+		// preserve Illustrator editing capabilities when exporting the document ( default: false )
+		svgExportOpts.preserveEditability = false;
+
+		// preserve slice data in exported document ( default: false )
+		svgExportOpts.slices = false;
+
+		// is SVG auto kerning allowed? ( default: false )
+		svgExportOpts.sVGAutoKerning = false;
+
+		// is SVG text-on-path construct allowed? ( default: false )
+		svgExportOpts.sVGTextOnPath = false;
+
+		return svgExportOpts;
+
+	}
+
+};
+
+
+
+// End of file functions.jsxinc
+// Location: ./Vector/functions.jsxinc
