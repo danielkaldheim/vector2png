@@ -20,6 +20,8 @@ if ( sourceFolder != null ) {
 	files = new Array();
 	fileType = prompt( 'Select type of Illustrator files to you want to process. Eg: *.ai', ' ' );
 
+	baseSize = prompt( 'Select bound size in pixel. Eg: 640x320 (can also be empty)', '' );
+
 	// Get all files matching the pattern
 	files = sourceFolder.getFiles( fileType );
 
@@ -32,6 +34,9 @@ if ( sourceFolder != null ) {
 
 			//file, resolution, filetypes, directory, options
 			drk_save.ToResolution(files[i], 56.25, ['png'], destFolder, {
+				file: {
+					'baseSize' : baseSize
+				},
 				directory: {
 					'subFolder': true,
 					'subFolderName' : 'drawable-ldpi'
@@ -39,6 +44,9 @@ if ( sourceFolder != null ) {
 			});
 
 			drk_save.ToResolution(files[i], 75.0, ['png'], destFolder, {
+				file: {
+					'baseSize' : baseSize
+				},
 				directory: {
 					'subFolder': true,
 					'subFolderName' : 'drawable-mdpi'
@@ -46,6 +54,9 @@ if ( sourceFolder != null ) {
 			});
 
 			drk_save.ToResolution(files[i], 100, ['png'], destFolder, {
+				file: {
+					'baseSize' : baseSize
+				},
 				directory: {
 					'subFolder': true,
 					'subFolderName' : 'drawable-hdpi'
@@ -53,6 +64,9 @@ if ( sourceFolder != null ) {
 			});
 
 			drk_save.ToResolution(files[i], 150, ['png'], destFolder, {
+				file: {
+					'baseSize' : baseSize
+				},
 				directory: {
 					'subFolder': true,
 					'subFolderName' : 'drawable-xhdpi'
@@ -60,6 +74,9 @@ if ( sourceFolder != null ) {
 			});
 
 			drk_save.ToResolution(files[i], 200, ['png'], destFolder, {
+				file: {
+					'baseSize' : baseSize
+				},
 				directory: {
 					'subFolder': true,
 					'subFolderName' : 'drawable-xxhdpi'
@@ -73,6 +90,7 @@ if ( sourceFolder != null ) {
 	else {
 		alert( 'No matching files found' );
 	}
+
 }
 
 

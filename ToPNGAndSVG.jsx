@@ -20,6 +20,8 @@ if ( sourceFolder != null ) {
 	files = new Array();
 	fileType = prompt( 'Select type of Illustrator files to you want to process. Eg: *.ai', ' ' );
 
+	baseSize = prompt( 'Select bound size in pixel. Eg: 640x320 (can also be empty)', '' );
+
 	// Get all files matching the pattern
 	files = sourceFolder.getFiles( fileType );
 
@@ -31,7 +33,11 @@ if ( sourceFolder != null ) {
 		for ( i = 0; i < files.length; i++ ) {
 
 			//file, resolution, filetypes, directory, options
-			drk_save.ToResolution(files[i], 100.0, ['png', 'svg'], destFolder, {});
+			drk_save.ToResolution(files[i], 100.0, ['png', 'svg'], destFolder, {
+				file: {
+					'baseSize' : baseSize
+				}
+			});
 
 		}
 

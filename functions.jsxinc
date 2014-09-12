@@ -23,18 +23,58 @@ var drk_save = {
 		}
 
 		var SourceDocument = app.open(file);
+		artBds = SourceDocument.artboards;
 
 		for (var i = 0; i < filetypes.length; i++) {
 
-			TargetFileName = drk_filehandle.newFilename(SourceDocument, filetypes[i], options.file, directory, options.directory);
+			for ( art_i = 0; art_i < artBds.length; art_i++ ) {
 
-			if (filetypes[i] == 'png') {
-				var imageOptions = drk_image_options.PNG({ 'scale' : resolution });
-				SourceDocument.exportFile( TargetFileName, ExportType.PNG24, imageOptions );
-			}
-			else if (filetypes[i] == "svg") {
-				var imageOptions = drk_image_options.SVG();
-				SourceDocument.exportFile( TargetFileName, ExportType.SVG, imageOptions );
+				SourceDocument.artboards.setActiveArtboardIndex( art_i );
+				var bounds = SourceDocument.visibleBounds,
+					scale = resolution;
+
+				artBds[i].artboardRect = bounds;
+
+				if (artBds.length > 1) {
+					if (options.file.postfix !== undefined) {
+						options.file.postfix = options.file.postfix + '_' + art_i;
+					}
+					else {
+						options.file.postfix = '_' +  art_i;
+					}
+				}
+
+				if (options.file.baseSize !== undefined && options.file.baseSize != '' && options.file.baseSize != 0) {
+
+					var base = options.file.baseSize,
+						s = base.split('x'),
+						w = s[0];
+						h = ((s.length > 1) ? s[1] : s[0]);
+
+					horizontalScale = ( w / ( artBds[i].artboardRect[2] - artBds[i].artboardRect[0] ) ) * resolution;
+					verticalScale   = ( h / ( artBds[i].artboardRect[1] - artBds[i].artboardRect[3] ) ) * resolution;
+
+					scale = verticalScale;
+					if (horizontalScale < verticalScale) {
+						scale = horizontalScale;
+					}
+				}
+
+
+				TargetFileName = drk_filehandle.newFilename(SourceDocument, filetypes[i], options.file, directory, options.directory);
+
+				if (filetypes[i] == 'png') {
+					var imageOptions = drk_image_options.PNG({
+						'horizontalScale' : scale,
+						'verticalScale'   : scale
+						 });
+					SourceDocument.exportFile( TargetFileName, ExportType.PNG24, imageOptions );
+				}
+				else if (filetypes[i] == "svg") {
+					var imageOptions = drk_image_options.SVG();
+					SourceDocument.exportFile( TargetFileName, ExportType.SVG, imageOptions );
+				}
+
 			}
 
 		};
@@ -119,12 +159,12 @@ var drk_image_options = {
 		// Add more properties here if you like
 		pngExportOpts.antiAliasing = true;
 		pngExportOpts.artBoardClipping = false;
-		pngExportOpts.horizontalScale = options.scale;
+		pngExportOpts.horizontalScale = options.horizontalScale;
 		//pngExportOpts.matte = true;
 		//pngExportOpts.matteColor = 0, 0, 0;
 		pngExportOpts.saveAsHTML = false;
 		pngExportOpts.transparency = true;
-		pngExportOpts.verticalScale = options.scale;
+		pngExportOpts.verticalScale = options.verticalScale;
 
 		return pngExportOpts;
 	},
