@@ -54,6 +54,17 @@ if ( sourceFolder != null ) {
 				}
 			});
 
+			drk_save.ToResolution(files[i], 300.0, ['png'], destFolder, {
+				file: {
+					'postfix' : '@3x',
+					'baseSize' : baseSize
+				},
+				directory: {
+					'subFolder' : true,
+					'postfix' : '.imageset'
+				}
+			});
+
 		}
 
 		alert( 'Files are saved in ' + destFolder );

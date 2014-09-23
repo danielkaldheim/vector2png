@@ -67,6 +67,9 @@ foreach ($dirs as $dir) {
 				if (strrpos($file, '@2x')) {
 					$images['scale']  = "2x";
 				}
+				if (strrpos($file, '@3x')) {
+					$images['scale']  = "3x";
+				}
 				$images['filename'] = $file;
 				$countImages++;
 				$json['images'][] = $images;
